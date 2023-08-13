@@ -130,14 +130,7 @@ export const Game = () => {
     };
 
     const checkCollision = () => {
-        const square1Rect = square1Ref.current.getBoundingClientRect();
-        const square2Rect = square2Ref.current.getBoundingClientRect();
         if (
-            // square1Rect.left < square2Rect.right &&
-            // square1Rect.right > square2Rect.left &&
-            // square1Rect.top < square2Rect.bottom &&
-            // square1Rect.bottom > square2Rect.top
-
             snakeParts[0].x === food.x && snakeParts[0].y === food.y
         ) {
             // setSnakeLen((snakeLen) => snakeLen + 1);
