@@ -1,0 +1,33 @@
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 20px); /* Adjust the grid size as needed */
+    gap: 1px;
+    background-color: #ccc;
+    height: 420px; /* Adjust the grid height to fit the desired number of rows */
+  }
+  
+  .grid-cell {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
+  
+  .snake {
+    background-color: #333; /* Adjust the snake's color as needed */
+  }
+  
+  .food {
+    background-color: #ff0000; /* Adjust the food color as needed */
+  }
+  
+  .game-over {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
