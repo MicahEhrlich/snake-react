@@ -1,7 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from 'styled-components';
 
 const GAME_SPEED = 200;
+
+type SnakePart = {
+    x:number;
+    y:number;
+}
 
 const enum DIRECTION {
     UP = 'up',
@@ -15,14 +20,14 @@ const Food = styled.div<{ $left: number; $top: number }>`
     height: 50px;
     border-radius: 50%;
     background: #ff0000;
-    border: 3px solid #333;
+    border: 2px solid #333;
     position: fixed;
-    margin: 2 px;
+    margin: 2px;
     left: ${(props: { $left: number; }) => props.$left * 50}px;
     top: ${(props: { $top: number; }) => props.$top * 50}px;
 `;
 
-const SnakePart = styled.div<{part: any}>`
+const SnakePart = styled.div<{part: {x: number, y:number}}>`
     position: absolute;
     top: ${props => props.part.y * 50}px;
     left: ${props => props.part.x * 50}px;
@@ -40,9 +45,6 @@ const generateRandomPosition = () => {
 }
 
 export const Game = () => {
-    const square1Ref = useRef(null);
-    const square2Ref = useRef(null);
-
     const [direction, setDirection] = useState(DIRECTION.UP);
     const [left, setLeft] = useState(200);
     const [bottom, setBottom] = useState(200);
@@ -51,7 +53,7 @@ export const Game = () => {
     const [snakeParts, setSnakeParts] = useState([{ x: 13, y: 13 }]);
     const [food, setFood] = useState(generateRandomPosition());
 
-    console.log(`food: {x , y}:  ${food.x} ${food.y}`)
+    // console.log(`food: {x , y}:  ${food.x} ${food.y}`)
 
 
     useEffect(() => {
@@ -83,7 +85,6 @@ export const Game = () => {
             }
 
             const updatedSnake = [head, ...snakeParts.slice(0, -1)];
-            debugger
             setSnakeParts(updatedSnake);
         }, GAME_SPEED)
         return () => { console.log('clear'); clearInterval(interval); }
@@ -104,9 +105,9 @@ export const Game = () => {
             setLeft(window.innerWidth);
         }
 
-        snakeParts.forEach((part, index) => {
+        snakeParts.forEach((part) => {
             if (direction === DIRECTION.UP && part.y < 0) {
-                part.y = window.innerHeight / 50;
+                part.y = Math.floor(window.innerHeight / 50);
             }
             else if (direction === DIRECTION.DOWN && (part.y * 50) >  window.innerHeight) {
                 part.y = 0;
@@ -115,7 +116,7 @@ export const Game = () => {
                 part.x = 0
             }
             else if (direction === DIRECTION.LEFT && (part.x < 0)) {
-                part.x = window.innerWidth / 50;
+                part.x = Math.floor(window.innerWidth / 50);
             }
         })
     }, [bottom, left])
@@ -129,11 +130,45 @@ export const Game = () => {
         }
     };
 
+    const setRandomFoodPosition = () => {
+        let foodPositionIsInSnake = true;
+        let newFoodPosition = { x: 0, y: 0};
+        while (foodPositionIsInSnake) {
+            foodPositionIsInSnake = false;
+            newFoodPosition = generateRandomPosition();
+            snakeParts.forEach((part) => {
+                if (part.x === newFoodPosition.x && part.y === newFoodPosition.y) {
+                    foodPositionIsInSnake = true;
+                }
+            })
+        }
+        setFood(newFoodPosition);
+    }
+
+    const isDuplicatePart = (item:SnakePart, arr:SnakePart[]) => { 
+        return snakeParts.some((el:SnakePart) => item.x === el.x && item.y === el.y);
+    } 
+
+    const isSnakeSelfCollide = () => {
+        const uniqueSnakeParts: SnakePart[] = [];
+        snakeParts.forEach((part) => {
+            if (!isDuplicatePart(part, snakeParts)) {
+                uniqueSnakeParts.push(part);
+            }
+        })
+        console.log(uniqueSnakeParts)
+        console.log(snakeParts);
+        return uniqueSnakeParts.length < snakeParts.length;
+    }
+
     const checkCollision = () => {
+        // console.log(`x: ${snakeParts[0].x}, y: ${snakeParts[0].y}`);   
+        if (isSnakeSelfCollide()) {
+            console.log('self collide!');
+        }
         if (
             snakeParts[0].x === food.x && snakeParts[0].y === food.y
         ) {
-            // setSnakeLen((snakeLen) => snakeLen + 1);
             const head = { ...snakeParts[0] };
             switch (direction) {
                 case DIRECTION.UP:
@@ -152,17 +187,16 @@ export const Game = () => {
                     break;
             }
             setSnakeParts([...snakeParts, { x: head.x, y: head.y }]);
-            setFood(generateRandomPosition())
+            setRandomFoodPosition();
         }
     }
     return (
         <div tabIndex={0} onKeyDown={keyDownHandler}>
-            <Food ref={square2Ref} $left={food.x} $top={food.y} />
+            <Food $left={food.x} $top={food.y} />
 
             {snakeParts.map((part, index) => 
                 <SnakePart 
                     part={part}
-                    ref={square1Ref}
                     key={index}
 
                 />
