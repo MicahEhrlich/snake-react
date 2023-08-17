@@ -4,25 +4,16 @@ import {
   isSnakeSelfCollide,
   setRandomItemPosition,
 } from "../utils/helpers";
-import { GameOver, ScoreBoard, Food, SnakePart, Obstacle } from "./Game.styles";
+import { GameOver, ScoreBoard, Food, SnakePart, Obstacle, BoardBorder } from "./Game.styles";
+import { DIRECTION, GamePosition } from "../types";
 
 const GAME_SPEED = 200;
+const BOARD_WIDTH = 2250;
+const BOARD_HEIGHT = 800;
 
 const defaultStartPosition = { x: 18, y: 8 };
 
 const defaultObstaclePosition = { x: 5, y: 4 };
-
-type GamePosition = {
-  x: number;
-  y: number;
-};
-
-const enum DIRECTION {
-  UP = "up",
-  DOWN = "down",
-  LEFT = "left",
-  RIGHT = "right",
-}
 
 export const Game = () => {
   const [direction, setDirection] = useState<DIRECTION>(DIRECTION.UP);
@@ -64,20 +55,20 @@ export const Game = () => {
   useEffect(() => {
     checkCollision();
     snakeParts.forEach((part) => {
-      if (direction === DIRECTION.UP && part.y < 3) {
-        part.y = Math.floor(window.innerHeight / 50) - 3;
+      if (direction === DIRECTION.UP && part.y < 1) {
+        part.y = Math.floor(BOARD_HEIGHT / 50) - 1;
       } else if (
         direction === DIRECTION.DOWN &&
-        (part.y + 3) * 50 > window.innerHeight
+        (part.y + 2) * 50 > BOARD_HEIGHT
       ) {
-        part.y = 2;
+        part.y = -1;
       } else if (
         direction === DIRECTION.RIGHT &&
-        (part.x + 4) * 50 > window.innerWidth
+        (part.x + 2) * 50 > BOARD_WIDTH
       ) {
-        part.x = 2;
-      } else if (direction === DIRECTION.LEFT && part.x < 3) {
-        part.x = Math.floor(window.innerWidth / 50) - 3;
+        part.x = 0;
+      } else if (direction === DIRECTION.LEFT && part.x < 1) {
+        part.x = Math.floor(BOARD_WIDTH / 50) - 1;
       }
     });
   }, [snakeParts]);
@@ -134,16 +125,18 @@ export const Game = () => {
     <>
       {gameOver && <GameOver>GAME OVER!</GameOver>}
       <ScoreBoard>{`SCORE: ${score}`}</ScoreBoard>
-      <div tabIndex={0} onKeyDown={keyDownHandler}>
-        <Food $left={food.x} $top={food.y} />
-        <Obstacle
-          $left={defaultObstaclePosition.x}
-          $top={defaultObstaclePosition.y}
-        />
-        {snakeParts.map((part, index) => (
-          <SnakePart part={part} key={index} />
-        ))}
-      </div>
+      <BoardBorder width={BOARD_WIDTH} height={BOARD_HEIGHT}>
+        <div tabIndex={0} onKeyDown={keyDownHandler}>
+          <Food $left={food.x} $top={food.y} />
+          <Obstacle
+            $left={defaultObstaclePosition.x}
+            $top={defaultObstaclePosition.y}
+          />
+          {snakeParts.map((part, index) => (
+            <SnakePart part={part} key={index} />
+          ))}
+        </div>
+      </BoardBorder>
     </>
   );
 };

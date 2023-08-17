@@ -6,7 +6,7 @@ export const Food = styled.div<{ $left: number; $top: number }>`
   border-radius: 50%;
   background: #ff0000;
   border: 2px solid #333;
-  position: fixed;
+  position: absolute;
   margin: 2px;
   left: ${(props: { $left: number }) => props.$left * 50}px;
   top: ${(props: { $top: number }) => props.$top * 50}px;
@@ -17,7 +17,7 @@ export const Obstacle = styled.div<{ $left: number; $top: number }>`
   height: 50px;
   background: #918129;
   border: 2px solid #333;
-  position: fixed;
+  position: absolute;
   margin: 2px;
   left: ${(props: { $left: number }) => props.$left * 50}px;
   top: ${(props: { $top: number }) => props.$top * 50}px;
@@ -33,6 +33,14 @@ export const SnakePart = styled.div<{ part: { x: number; y: number } }>`
   border: 2px solid #333;
 `;
 
+export const BoardBorder = styled.div<{width: number, height: number}>`
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    width: ${(props) => props.width}px;
+    height: ${(props) => props.height}px;
+    border: 2px solid red;
+`
 export const ScoreBoard = styled.div`
   position: absolute;
   top: 50px;
