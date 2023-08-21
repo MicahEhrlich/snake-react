@@ -4,11 +4,19 @@ import {
   isSnakeSelfCollide,
   setRandomItemPosition,
 } from "../utils/helpers";
-import { GameOver, ScoreBoard, Food, SnakePart, Obstacle, BoardBorder } from "./Game.styles";
+import {
+  GameOver,
+  ScoreBoard,
+  Food,
+  SnakePart,
+  Obstacle,
+  BoardBorder,
+  ResetGameButton,
+} from "./Game.styles";
 import { DIRECTION, GamePosition } from "../types";
 
 const GAME_SPEED = 200;
-const BOARD_WIDTH = 2250;
+const BOARD_WIDTH = 1700;
 const BOARD_HEIGHT = 800;
 
 const defaultStartPosition = { x: 18, y: 8 };
@@ -73,6 +81,14 @@ export const Game = () => {
     });
   }, [snakeParts]);
 
+  const OnResetGame = () => {
+    setDirection(DIRECTION.UP);
+    setSnakeParts([defaultStartPosition]);
+    setFood(generateRandomPosition());
+    setScore(0);
+    setGameOver(false);
+  };
+
   const keyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     switch (event.code) {
       case "ArrowUp":
@@ -122,11 +138,16 @@ export const Game = () => {
     }
   };
   return (
-    <>
-      {gameOver && <GameOver>GAME OVER!</GameOver>}
+    <div tabIndex={0} onKeyDown={keyDownHandler}>
       <ScoreBoard>{`SCORE: ${score}`}</ScoreBoard>
       <BoardBorder width={BOARD_WIDTH} height={BOARD_HEIGHT}>
-        <div tabIndex={0} onKeyDown={keyDownHandler}>
+      {gameOver && (
+        <GameOver>
+          GAME OVER!
+          <ResetGameButton onClick={OnResetGame}>Restart</ResetGameButton>
+        </GameOver>
+      )}
+        <>
           <Food $left={food.x} $top={food.y} />
           <Obstacle
             $left={defaultObstaclePosition.x}
@@ -135,8 +156,8 @@ export const Game = () => {
           {snakeParts.map((part, index) => (
             <SnakePart part={part} key={index} />
           ))}
-        </div>
+        </>
       </BoardBorder>
-    </>
+    </div>
   );
 };

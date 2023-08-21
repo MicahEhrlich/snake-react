@@ -33,7 +33,7 @@ export const SnakePart = styled.div<{ part: { x: number; y: number } }>`
   border: 2px solid #333;
 `;
 
-export const BoardBorder = styled.div<{width: number, height: number}>`
+export const BoardBorder = styled.div<{ width: number, height: number }>`
     position: absolute;
     top: 100px;
     left: 100px;
@@ -51,9 +51,38 @@ export const ScoreBoard = styled.div`
 `;
 
 export const GameOver = styled.div`
+  display: flex;
+  flex-direction: column;
   font-weight: 600;
   font-size: 70px;
-  color: red;
-  top: 50%;
-  left: 50%;
+  color: white;
+  position: relative;
+  top: 30%;
+  align-items: center;
+  z-index: 9999;
+  border: 2px solid gray;
+  padding: 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  margin-left: 30rem;
+  margin-right: 30rem;
+  box-shadow: 4px 4px 4px;
+`;
+
+export const GameOverWrapper = styled.div`
+  display:flex;
+  flex-direction: row;
+  padding: 20px;
+`;
+
+export const ResetGameButtonsWrapper = styled.div`
+
+`;
+
+export const ResetGameButton = styled.button`
+  padding: 8px;
+  border: 2px solid gray;
+  border-radius: 4px;
+  font-size: 20px;
+  width: fit-content;
 `;
