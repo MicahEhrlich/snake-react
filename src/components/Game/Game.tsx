@@ -3,7 +3,7 @@ import {
   generateRandomPosition,
   isSnakeSelfCollide,
   setRandomItemPosition,
-} from "../utils/helpers";
+} from "../../utils/helpers";
 import {
   GameOver,
   ScoreBoard,
@@ -13,7 +13,7 @@ import {
   BoardBorder,
   ResetGameButton,
 } from "./Game.styles";
-import { DIRECTION, GamePosition } from "../types";
+import { DIRECTION, GamePosition } from "../../types";
 
 const GAME_SPEED = 200;
 const BOARD_WIDTH = 1700;
