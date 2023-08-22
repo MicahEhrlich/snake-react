@@ -19,6 +19,7 @@ export const Obstacle = styled.div<{ $left: number; $top: number }>`
   border: 2px solid #333;
   position: absolute;
   margin: 2px;
+  z-index: 2;
   left: ${(props: { $left: number }) => props.$left * 50}px;
   top: ${(props: { $top: number }) => props.$top * 50}px;
 `;
@@ -31,6 +32,7 @@ export const SnakePart = styled.div<{ part: { x: number; y: number } }>`
   height: 50px;
   background: #0CFF00;
   border: 2px solid #333;
+  z-index: 1;
 `;
 
 export const BoardBorder = styled.div<{ width: number, height: number }>`
@@ -42,9 +44,7 @@ export const BoardBorder = styled.div<{ width: number, height: number }>`
     border: 2px solid red;
 `
 export const ScoreBoard = styled.div`
-  position: absolute;
-  top: 50px;
-  left: 100px;
+  
   font-weight: 500;
   font-size: 30px;
   color: yellow;
@@ -69,6 +69,15 @@ export const GameOver = styled.div`
   box-shadow: 4px 4px 4px;
 `;
 
+export const GameOverHighScore = styled(GameOver)`
+  font-weight: 500;
+  font-size: 30px;
+  color: white;
+  position: relative;
+  top: 10%;
+ 
+`;
+
 export const GameOverWrapper = styled.div`
   display:flex;
   flex-direction: row;
@@ -76,13 +85,30 @@ export const GameOverWrapper = styled.div`
 `;
 
 export const ResetGameButtonsWrapper = styled.div`
-
+  display: flex;
+  flex-direction: column;
 `;
 
-export const ResetGameButton = styled.button`
+export const GameButton = styled.button`
   padding: 8px;
   border: 2px solid gray;
   border-radius: 4px;
   font-size: 20px;
   width: fit-content;
+`;
+
+export const GameTopMenu = styled.div<{ width: number}>`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  top: 50px;
+  left: 100px;
+  width: ${(props) => props.width}px;
+`;
+
+export const GameMenuButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;

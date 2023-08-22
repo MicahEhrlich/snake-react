@@ -11,9 +11,13 @@ import {
   SnakePart,
   Obstacle,
   BoardBorder,
-  ResetGameButton,
+  GameButton,
+  GameOverHighScore,
+  GameTopMenu,
+  GameMenuButtons,
 } from "./Game.styles";
 import { DIRECTION, GamePosition } from "../../types";
+import { Highscore } from "../Highscore";
 
 const GAME_SPEED = 200;
 const BOARD_WIDTH = 1700;
@@ -31,10 +35,12 @@ export const Game = () => {
   const [food, setFood] = useState<GamePosition>(generateRandomPosition());
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [showHighscore, setShowHighscore] = useState(false);
+  const [gamePaused, setGamePaused] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!gameOver) {
+      if (!gameOver && !gamePaused) {
         const head = { ...snakeParts[0] };
         switch (direction) {
           default:
@@ -58,36 +64,51 @@ export const Game = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [direction, snakeParts, gameOver, score]);
+  }, [direction, snakeParts, gameOver, score, gamePaused]);
 
   useEffect(() => {
-    checkCollision();
-    snakeParts.forEach((part) => {
-      if (direction === DIRECTION.UP && part.y < 1) {
-        part.y = Math.floor(BOARD_HEIGHT / 50) - 1;
-      } else if (
-        direction === DIRECTION.DOWN &&
-        (part.y + 2) * 50 > BOARD_HEIGHT
-      ) {
-        part.y = -1;
-      } else if (
-        direction === DIRECTION.RIGHT &&
-        (part.x + 2) * 50 > BOARD_WIDTH
-      ) {
-        part.x = 0;
-      } else if (direction === DIRECTION.LEFT && part.x < 1) {
-        part.x = Math.floor(BOARD_WIDTH / 50) - 1;
-      }
-    });
+    if (!gamePaused) {
+      checkCollision();
+      snakeParts.forEach((part) => {
+        if (direction === DIRECTION.UP && part.y < 1) {
+          part.y = Math.floor(BOARD_HEIGHT / 50) - 1;
+        } else if (
+          direction === DIRECTION.DOWN &&
+          (part.y + 2) * 50 > BOARD_HEIGHT
+        ) {
+          part.y = -1;
+        } else if (
+          direction === DIRECTION.RIGHT &&
+          (part.x + 2) * 50 > BOARD_WIDTH
+        ) {
+          part.x = 0;
+        } else if (direction === DIRECTION.LEFT && part.x < 1) {
+          part.x = Math.floor(BOARD_WIDTH / 50) - 1;
+        }
+      });
+    }
   }, [snakeParts]);
 
-  const OnResetGame = () => {
+  const onResetGame = () => {
     setDirection(DIRECTION.UP);
     setSnakeParts([defaultStartPosition]);
     setFood(generateRandomPosition());
     setScore(0);
     setGameOver(false);
+    setShowHighscore(false);
   };
+
+  const onShowHighscore = () => {
+    setShowHighscore(!showHighscore);
+  }
+
+  const onResumeGame = () => {
+    setGamePaused(false);
+  }
+
+  const onPauseGame = () => {
+    setGamePaused(true);
+  }
 
   const keyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     switch (event.code) {
@@ -102,6 +123,9 @@ export const Game = () => {
         break;
       case "ArrowRight":
         direction !== DIRECTION.LEFT && setDirection(DIRECTION.RIGHT);
+        break;
+      case "Escape":
+        setGamePaused(!gamePaused);
         break;
     }
   };
@@ -139,14 +163,32 @@ export const Game = () => {
   };
   return (
     <div tabIndex={0} onKeyDown={keyDownHandler}>
-      <ScoreBoard>{`SCORE: ${score}`}</ScoreBoard>
+      <GameTopMenu width={BOARD_WIDTH}>
+        <ScoreBoard>{`SCORE: ${score}`}</ScoreBoard>
+        <GameMenuButtons>
+          <GameButton onClick={onPauseGame}>Pause</GameButton>
+        </GameMenuButtons>
+      </GameTopMenu>
       <BoardBorder width={BOARD_WIDTH} height={BOARD_HEIGHT}>
-      {gameOver && (
-        <GameOver>
-          GAME OVER!
-          <ResetGameButton onClick={OnResetGame}>Restart</ResetGameButton>
-        </GameOver>
-      )}
+        {gamePaused && (
+          <GameOver>
+            PAUSED
+            <GameButton onClick={onResumeGame}>Resume</GameButton>
+          </GameOver>
+        )}
+        {gameOver && !showHighscore && (
+          <GameOver>
+            GAME OVER!
+            <GameButton onClick={onResetGame}>Restart</GameButton>
+            <GameButton onClick={onShowHighscore}>Highscore</GameButton>
+          </GameOver>
+        )}
+        {showHighscore && (
+          <GameOverHighScore>
+            <Highscore />
+            <GameButton onClick={onResetGame}>Restart</GameButton>
+          </GameOverHighScore>
+        )}
         <>
           <Food $left={food.x} $top={food.y} />
           <Obstacle
