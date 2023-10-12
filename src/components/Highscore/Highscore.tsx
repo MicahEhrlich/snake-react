@@ -1,5 +1,6 @@
+import React from "react";
+import { getUsersHighscore } from "../../api/api";
 import { HighscoreTable, HighscoreWrapper, NameTitleRow, StyledColumn, StyledColumnScore, StyledRow } from "./Highscore.styles"
-import ScoreTable from './score.json';
 
 type ScoreRow = {
     place: number;
@@ -8,18 +9,33 @@ type ScoreRow = {
 }
 
 export const Highscore = () => {
+    const [scoreTable, setScoreTable] = React.useState<any>([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const getUsersScores = async () => {
+        setLoading(true);
+        const response = await getUsersHighscore();
+        setScoreTable(response);
+        setLoading(false);
+    }
+
+    React.useEffect(() => {
+        getUsersScores();
+    }, []);
+
     return (
         <HighscoreWrapper>
-            <h2>HighScore</h2>
+            <h2>High Score</h2>
+            {loading ? <h3>Loading</h3> : (
             <HighscoreTable>
-                {ScoreTable?.table?.map((row: ScoreRow) =>
+                {scoreTable?.map((row: ScoreRow) =>
                     <StyledRow>
                         <StyledColumn><NameTitleRow><StyledColumn>{`#${row.place}`}</StyledColumn>
                             <StyledColumn>{row.name}</StyledColumn></NameTitleRow></StyledColumn>
                         <StyledColumnScore>{row.score}</StyledColumnScore>
                     </StyledRow>
                 )}
-            </HighscoreTable>
+            </HighscoreTable>)}
         </HighscoreWrapper>
     )
 }

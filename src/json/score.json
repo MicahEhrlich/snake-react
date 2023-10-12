@@ -1,0 +1,19 @@
+{
+    "table": [
+        {
+            "place": 1,
+            "name": "John",
+            "score": 120
+        },
+        {
+            "place": 2,
+            "name": "Dave",
+            "score": 100
+        },
+        {
+            "place": 3,
+            "name": "Chris",
+            "score": 90
+        }
+    ]
+}
